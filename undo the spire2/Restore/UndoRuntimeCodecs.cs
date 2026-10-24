@@ -34,7 +34,6 @@ internal static partial class UndoRuntimeStateCodecRegistry
         new PowerIntFieldsCodec<FeralPower>("power:FeralPower.zeroCostAttacksPlayed", true, "zeroCostAttacksPlayed"),
         new PowerDecimalFieldsCodec<HardenedShellPower>("power:HardenedShellPower.damageReceivedThisTurn", true, "damageReceivedThisTurn"),
         new PowerIntFieldsCodec<OrbitPower>("power:OrbitPower.progress", true, "energySpent", "triggerCount"),
-        new PowerIntFieldsCodec<OutbreakPower>("power:OutbreakPower.timesPoisoned", true, "timesPoisoned"),
         new VitalSparkTriggeredPlayersPowerCodec(),
         new AfterimagePlayedCardsPowerCodec(),
         new MonologuePlayedCardsPowerCodec(),
@@ -511,7 +510,6 @@ internal static partial class UndoRuntimeStateCodecRegistry
     }
 
 }
-
 
 
 

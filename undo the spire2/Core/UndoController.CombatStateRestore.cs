@@ -384,6 +384,7 @@ public sealed partial class UndoController
 
         int before = playerCombatState.TurnNumber;
         int target = Math.Max(1, playerCombatTurnState.TurnNumber);
+        playerCombatState.Phase = playerCombatTurnState.Phase;
         if (!TrySetPrivateAutoPropertyBackingField(playerCombatState, "TurnNumber", target))
             SetPrivatePropertyValue(playerCombatState, "TurnNumber", target);
 
@@ -642,7 +643,9 @@ public sealed partial class UndoController
 
     private async Task<bool> ApplyFullStateSnapshotCoreAsync(UndoCombatFullState snapshot, RunState runState, CombatState combatState)
     {
+        Task? previousTurnLoop = UndoCombatTurnRuntime.CancelCurrentTurnLoop();
         ResetActionExecutorForRestore();
+        await UndoCombatTurnRuntime.PrepareForRestoreAsync(combatState, previousTurnLoop);
         RunManager.Instance.ActionQueueSet.Reset();
         ResetActionSynchronizerForRestore();
         RebuildActionQueues(runState.Players);
@@ -722,6 +725,7 @@ public sealed partial class UndoController
         }
 
         await RefreshCombatUiAsync(combatState, snapshot);
+        UndoCombatTurnRuntime.StartRestoredTurnLoop(combatState);
         return true;
     }
 
@@ -1605,4 +1609,3 @@ public sealed partial class UndoController
             powerList.Add(power);
     }
 }
-

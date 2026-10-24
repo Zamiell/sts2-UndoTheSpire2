@@ -14,7 +14,7 @@ namespace UndoTheSpire2;
 
 internal sealed class UndoCombatFullState
 {
-    public const int CurrentSchemaVersion = 20;
+    public const int CurrentSchemaVersion = 21;
 
     public UndoCombatFullState(
         NetFullCombatState fullState,
@@ -197,6 +197,8 @@ internal sealed class UndoPlayerCombatTurnState
     public required ulong PlayerNetId { get; init; }
 
     public required int TurnNumber { get; init; }
+
+    public required MegaCrit.Sts2.Core.Combat.PlayerTurnPhase Phase { get; init; }
 }
 
 internal sealed class UndoPotionSlotState

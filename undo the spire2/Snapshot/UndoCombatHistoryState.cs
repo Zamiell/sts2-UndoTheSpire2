@@ -79,6 +79,8 @@ internal sealed class UndoCardPlayState
 {
     public required CardRef Card { get; init; }
 
+    public required ulong PlayerNetId { get; init; }
+
     public CreatureRef? Target { get; init; }
 
     public PileType ResultPile { get; init; }
@@ -132,5 +134,4 @@ internal sealed class UndoMonsterPerformedMoveState
 
     public IReadOnlyList<CreatureRef> Targets { get; init; } = [];
 }
-
 

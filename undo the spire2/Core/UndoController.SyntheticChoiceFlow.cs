@@ -568,8 +568,7 @@ public sealed partial class UndoController
             handCards[handIndex].GiveSingleTurnRetain();
         }
         RunManager.Instance.ActionQueueSynchronizer.SetCombatState(ActionSynchronizerCombatState.NotPlayPhase);
-        await CombatManager.Instance.EndPlayerTurnPhaseTwoInternal();
-        await CombatManager.Instance.SwitchFromPlayerToEnemySide();
+        await UndoCombatTurnRuntime.ResumeAfterRetainSelectionAsync(me);
         await StabilizeAfterFlowAdvancingChoiceExecutionAsync();
         return true;
     }

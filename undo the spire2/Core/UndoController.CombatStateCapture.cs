@@ -105,7 +105,8 @@ public sealed partial class UndoController
         return [.. runState.Players.Select(player => new UndoPlayerCombatTurnState
         {
             PlayerNetId = player.NetId,
-            TurnNumber = player.PlayerCombatState?.TurnNumber ?? 1
+            TurnNumber = player.PlayerCombatState?.TurnNumber ?? 1,
+            Phase = player.PlayerCombatState?.Phase ?? PlayerTurnPhase.None
         })];
     }
 
@@ -484,12 +485,11 @@ public sealed partial class UndoController
     {
         try
         {
-            MegaTrackEntry? trackEntry = UndoReflectionUtil.FindMethod(animationState.GetType(), "GetCurrent")?.Invoke(animationState, [trackIndex]) as MegaTrackEntry;
+            using MegaTrackEntry? trackEntry = animationState.GetCurrent(trackIndex);
             if (trackEntry == null)
                 return null;
 
-            MegaAnimation? animation = UndoReflectionUtil.FindMethod(trackEntry.GetType(), "GetAnimation")?.Invoke(trackEntry, null) as MegaAnimation;
-            string? animationName = animation?.GetName();
+            string? animationName = trackEntry.GetAnimationName();
             bool? loop = TryReadTrackEntryLoop(trackEntry);
             float? trackTime = UndoReflectionUtil.FindMethod(trackEntry.GetType(), "GetTrackTime")?.Invoke(trackEntry, null) is float resolvedTrackTime
                 ? resolvedTrackTime
@@ -1185,4 +1185,3 @@ public sealed partial class UndoController
         };
     }
 }
-

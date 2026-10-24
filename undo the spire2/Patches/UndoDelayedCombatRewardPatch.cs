@@ -56,7 +56,7 @@ public static class UndoDelayedCombatRewardPatch
         Creature target = cardPlay.Target ?? throw new ArgumentNullException(nameof(cardPlay.Target));
         bool shouldTriggerFatal = target.Powers.All(static power => power.ShouldOwnerDeathTriggerFatal());
         AttackCommand attackCommand = await DamageCmd.Attack(card.DynamicVars.Damage.BaseValue)
-            .FromCard(card)
+            .FromCard(card, cardPlay)
             .Targeting(target)
             .WithHitFx("vfx/vfx_attack_slash", null, null)
             .Execute(choiceContext);

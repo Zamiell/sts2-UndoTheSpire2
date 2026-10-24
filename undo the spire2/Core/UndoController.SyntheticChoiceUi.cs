@@ -328,19 +328,17 @@ public sealed partial class UndoController
                 cardNode.ZIndex = 100;
                 cardNode.RotationDegrees = (i % 2 == 0 ? -3f : 3f);
 
-                NExhaustVfx? exhaustVfx = NExhaustVfx.Create(cardNode);
+                NCardExhaustVfx? exhaustVfx = NCardExhaustVfx.Create(cardNode);
                 if (exhaustVfx != null)
                 {
                     exhaustVfx.ZIndex = 130;
                     combatRoom.Ui.AddChildSafely(exhaustVfx);
+                    _ = TaskHelper.RunSafely(exhaustVfx.PlayAnimation());
                 }
-
-                float duration = SaveManager.Instance.PrefsSave.FastMode == FastModeType.Fast ? 0.2f : 0.3f;
-                Tween tween = combatRoom.CreateTween();
-                tween.SetParallel(true);
-                tween.TweenProperty(cardNode, "modulate", StsColors.exhaustGray, duration);
-                tween.Chain().TweenInterval(0.1f);
-                tween.Chain().TweenCallback(Callable.From(cardNode.QueueFreeSafely));
+                else
+                {
+                    cardNode.QueueFreeSafely();
+                }
             }
             if (request.TransformPileType != null)
             {

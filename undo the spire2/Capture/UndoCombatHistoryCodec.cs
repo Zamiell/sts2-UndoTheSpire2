@@ -424,6 +424,7 @@ internal static class UndoCombatHistoryCodec
         return new UndoCardPlayState
         {
             Card = UndoStableRefs.CaptureCardRef(runState, cardPlay.Card),
+            PlayerNetId = cardPlay.Player.NetId,
             Target = UndoStableRefs.CaptureCreatureRef(creatures, cardPlay.Target),
             ResultPile = cardPlay.ResultPile,
             Resources = new UndoResourceInfoState
@@ -444,6 +445,8 @@ internal static class UndoCombatHistoryCodec
         return new CardPlay
         {
             Card = UndoStableRefs.ResolveCardRef(runState, state.Card),
+            Player = runState.GetPlayer(state.PlayerNetId)
+                ?? throw new InvalidOperationException($"Could not restore card play player {state.PlayerNetId}."),
             Target = UndoStableRefs.ResolveCreature(creaturesByKey, state.Target?.Key),
             ResultPile = state.ResultPile,
             Resources = new ResourceInfo

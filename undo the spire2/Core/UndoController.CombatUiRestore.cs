@@ -768,15 +768,8 @@ public sealed partial class UndoController
     {
         NTargetManager.Instance?.CancelTargeting();
         ResetLocalHoveredModelState();
-        ClearCombatManagerCollection("_playersReadyToEndTurn");
-        ClearCombatManagerCollection("_playersReadyToBeginEnemyTurn");
-        ClearCombatManagerCollection("_playersTakingExtraTurn");
         bool isPlayerTurn = combatState.CurrentSide == CombatSide.Player;
-        SetCombatManagerProperty("IsPlayPhase", isPlayerTurn);
-        SetCombatManagerProperty("IsEnemyTurnStarted", !isPlayerTurn);
-        SetCombatManagerProperty("EndingPlayerTurnPhaseOne", false);
-        SetCombatManagerProperty("EndingPlayerTurnPhaseTwo", false);
-        SetCombatManagerProperty("PlayerActionsDisabled", !isPlayerTurn);
+        SetPrivatePropertyValue(CombatManager.Instance, "PlayerActionsDisabled", !isPlayerTurn);
         Player? me = LocalContext.GetMe(combatState);
         if (me != null && isPlayerTurn)
             CombatManager.Instance.UndoReadyToEndTurn(me);
@@ -1533,7 +1526,8 @@ public sealed partial class UndoController
                 MegaTrackEntry? trackEntry;
                 try
                 {
-                    trackEntry = animationState.SetAnimation(trackState.AnimationName, trackState.Loop ?? true, trackState.TrackIndex);
+                    animationState.SetAnimation(trackState.AnimationName, trackState.Loop ?? true, trackState.TrackIndex);
+                    trackEntry = animationState.GetCurrent(trackState.TrackIndex);
                 }
                 catch
                 {
@@ -1547,10 +1541,13 @@ public sealed partial class UndoController
                 if (trackEntry == null)
                     continue;
 
-                if (trackState.Loop.HasValue)
-                    trackEntry.SetLoop(trackState.Loop.Value);
-                if (trackState.TrackTime.HasValue)
-                    trackEntry.SetTrackTime(trackState.TrackTime.Value);
+                using (trackEntry)
+                {
+                    if (trackState.Loop.HasValue)
+                        trackEntry.SetLoop(trackState.Loop.Value);
+                    if (trackState.TrackTime.HasValue)
+                        trackEntry.SetTrackTime(trackState.TrackTime.Value);
+                }
             }
         }
     }
@@ -2535,4 +2532,3 @@ public sealed partial class UndoController
     // hand.Add(...) 会立刻触发官方 RefreshLayout，若此时手牌 holder 还没清空，
     // 就会出现日志里的 "Hand size 12 is greater than 11"。
 }
-

@@ -59,6 +59,17 @@ The log is typically located at:
 
 ## Developer Version Notes
 
-- Current decompiled source reference: `F:\projects\slay the spire2\106`
+- Current compatibility target: **Slay the Spire 2 v0.111.0** and **.NET 9**. Older game versions are not supported by this build.
 - The project references the live game DLL through `$(Sts2DataDir)/sts2.dll`; update source notes and API checks when the game version changes.
 - Runtime-sensitive v0.106 cases are documented in `ARCHITECTURE.md`: Aeonglass/Wither fake upgrades and ThinkingAhead hand-selection replay.
+- v0.111.0 stores combat turn flags and ready signals in `CombatTurnState`. Restore cancels the discarded turn loop, replaces that state, and resumes after turn-start effects instead of replaying them.
+
+The managed compatibility checks initialize the snapshot codecs, install every Harmony patch, and exercise restored turn progression without launching the game. Run them with a .NET 9 runtime (the game's Harmony version does not support .NET 10):
+
+```sh
+dotnet run --project tests/Compatibility -c Release \
+  -p:Sts2Path= -p:Sts2DataDir="/path/to/game/data_sts2_windows_x86_64" \
+  -- "/path/to/game/data_sts2_windows_x86_64"
+```
+
+Set `NUGET_PACKAGES` to a writable local package cache if the development path in `NuGet.Config` is unavailable. The empty `Sts2Path` prevents the build from deploying a second copy of the mod. To install manually, replace the DLL in the existing mod folder and restart the game. These checks do not replace in-game UI and card-effect testing.

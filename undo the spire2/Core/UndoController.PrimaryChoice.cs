@@ -1217,8 +1217,7 @@ public sealed partial class UndoController
         }
 
         RunManager.Instance.ActionQueueSynchronizer.SetCombatState(ActionSynchronizerCombatState.NotPlayPhase);
-        await CombatManager.Instance.EndPlayerTurnPhaseTwoInternal();
-        await CombatManager.Instance.SwitchFromPlayerToEnemySide();
+        await UndoCombatTurnRuntime.ResumeAfterRetainSelectionAsync(player);
         await StabilizeAfterFlowAdvancingChoiceExecutionAsync();
         return true;
     }
@@ -1590,6 +1589,7 @@ public sealed partial class UndoController
             return;
 
         CombatState? combatState = playedCard.CombatState as CombatState ?? player.Creature.CombatState as CombatState;
+        CombatId? combatId = CombatManager.Instance.CurrentCombatId;
         CardPlay? pendingCardPlay = combatState == null ? null : TryResolveDetachedPendingCardPlay(combatState, playedCard);
 
         playedCard.InvokeExecutionFinished();
@@ -1601,7 +1601,7 @@ public sealed partial class UndoController
         }
 
         await playedCard.MoveToResultPileWithoutPlaying(choiceContext);
-        await CombatManager.Instance.CheckForEmptyHand(choiceContext, player);
+        await CombatManager.Instance.CheckForEmptyHand(combatId, choiceContext, player);
         CleanupDetachedPlayedCardTail(playedCard);
         EndDetachedPlayedCardChoiceContext(choiceContext, playedCard);
     }

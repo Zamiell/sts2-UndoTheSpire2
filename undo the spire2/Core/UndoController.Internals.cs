@@ -148,17 +148,6 @@ public sealed partial class UndoController
             .Invoke(control, null);
     }
 
-    private static void ClearCombatManagerCollection(string fieldName)
-    {
-        object? collection = FindField(typeof(CombatManager), fieldName)?.GetValue(CombatManager.Instance);
-        collection?.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.Invoke(collection, null);
-    }
-
-    private static void SetCombatManagerProperty(string propertyName, object? value)
-    {
-        FindProperty(typeof(CombatManager), propertyName)?.SetValue(CombatManager.Instance, value);
-    }
-
     private static T? GetPrivateFieldValue<T>(object instance, string fieldName) where T : class
     {
         return FindField(instance.GetType(), fieldName)?.GetValue(instance) as T;
@@ -838,4 +827,3 @@ public sealed partial class UndoController
         return completionSource.Task;
     }
 }
-

@@ -6,6 +6,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Actions;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -50,7 +51,8 @@ internal static class UndoStaleCardExecutionPatch
             typeof(decimal),
             typeof(ValueProp),
             typeof(Creature),
-            typeof(CardModel)
+            typeof(CardModel),
+            typeof(CardPlay)
         ])]
     [HarmonyPrefix]
     private static bool GuardStaleCardDamage(
